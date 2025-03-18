@@ -53,7 +53,13 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const path = usePathname();
-  const isActive = (itemPath: string) => (itemPath === '/' ? path === '/' : path.startsWith(itemPath));
+  const isActive = (itemPath: string) => {
+    if (itemPath === '/') {
+      // Check if current path is root or starts with /edit/
+      return path === '/' || path.startsWith('/edit/');
+    }
+    return path.startsWith(itemPath);
+  };
 
   const sidebarItems = [
     { icon: BarChartIcon, label: "Stats", path: "/stats" },

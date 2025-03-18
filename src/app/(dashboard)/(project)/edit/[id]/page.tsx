@@ -7,14 +7,16 @@ import ImageUpload from '../../projectCom/UploadImage';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import LocationSection from '../../projectCom/location';
+import { useProjectStore } from '../../store/projectStore';
 
 // Demo projects data - would be fetched from API in real app
+// Update the projects array to match the main page
 const projects = [
-  { id: '1', name: 'Serenity Heights', completion: 81 },
-  { id: '2', name: 'Urban Oasis Towers', completion: 45 },
-  { id: '3', name: 'Riverside Residences', completion: 92 },
-  { id: '4', name: 'Golden Valley Estates', completion: 32 },
-  { id: '5', name: 'Skyline Apartments', completion: 67 },
+  { id: '1', name: 'Serenity Heights', code: 'SH7625AE4', completion: 81 },
+  { id: '2', name: 'Urban Oasis Towers', code: 'UO123F67', completion: 45 },
+  { id: '3', name: 'Riverside Residences', code: 'RR567D89', completion: 92 },
+  { id: '4', name: 'Golden Valley Estates', code: 'GV890E12', completion: 32 },
+  { id: '5', name: 'Skyline Apartments', code: 'SA456F78', completion: 67 },
 ];
 
 const ProjectEdit: React.FC = () => {
@@ -22,12 +24,17 @@ const ProjectEdit: React.FC = () => {
   const route = useRouter();
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [project, setProject] = useState<{ id: string, name: string } | null>(null);
+  const getProject = useProjectStore(state => state.getProject);
+const [project, setProject] = useState<{
+  id: string;
+  name: string;
+  code: string;
+  completion: number;
+} | null>(null);
   
   useEffect(() => {
-    // Simulate API fetch
     const timer = setTimeout(() => {
-      const foundProject = projects.find(p => p.id === id);
+      const foundProject = getProject(id);
       if (foundProject) {
         setProject(foundProject);
         setProgress(foundProject.completion);
@@ -36,7 +43,7 @@ const ProjectEdit: React.FC = () => {
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [id, getProject]);
   
   const handleAmenityUpdate = (selectedCount: number, totalCount: number) => {
     const newProgress = Math.round((selectedCount / totalCount) * 100);
